@@ -1,5 +1,8 @@
 (function() {
 	
+	//document ready callback: see http://dustindiaz.com/smallest-domready-ever , alternative is comment #217 here http://dean.edwards.name/weblog/2006/06/again/#comment367184 
+	function r(f){!include.ready()?setTimeout('r('+f+')',9):f()}
+	
 	//object given to local context later
 	function asyncJsIncluder() {
 		
@@ -92,9 +95,6 @@
 			else
 				push(f,c,b);
 		};
-		
-		//document ready callback: see http://dustindiaz.com/smallest-domready-ever , alternative is comment #217 here http://dean.edwards.name/weblog/2006/06/again/#comment367184 
-		function r(f){!inc.ready()?setTimeout('r('+f+')',9):f()}
 	
 		//load everything once the page is ready	
 		r(function(){

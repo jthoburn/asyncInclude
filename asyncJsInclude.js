@@ -69,7 +69,7 @@
 		};
 		
 		//push unique script's to __status__
-		function push(f,c,b) { if( !defined(b) && !initiated(f) ) __STATUS__[urlprotocol(f)] = { status : 'WAITING', callback : c }; if(inc.ready) load(urlprotocol(f)); else __STATUS__[urlprotocol(f)].status .= " REJECTED"; };
+		function push(f,c,b) { if( !defined(b) && !initiated(f) ) __STATUS__[urlprotocol(f)] = { status : 'WAITING', callback : c , global : b }; if(inc.ready) load(urlprotocol(f)); else __STATUS__[urlprotocol(f)].status .= " REJECTED"; };
 		
 		//our collection function for adding scripts to the loader
 		inc.include = function(f,c,b) { 
@@ -90,7 +90,7 @@
 				}
 			}
 			else
-				push(f,b,c);
+				push(f,c,b);
 		};
 		
 		//document ready callback: see http://dustindiaz.com/smallest-domready-ever , alternative is comment #217 here http://dean.edwards.name/weblog/2006/06/again/#comment367184 

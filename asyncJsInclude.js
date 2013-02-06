@@ -1,6 +1,5 @@
 	
-	//object given to local context later
-	window.asyncInclude = new function() {
+	window['asyncInclude'] = new function() {
 		
 		var inc = this;
 		
@@ -85,7 +84,7 @@
 			if(Object.prototype.toString.call(f) == '[object Array]') {
 				var a = f.length;
 				for(var o=0;o<a;o++)
-					push(f[0],f[1],f[2],f[3]);
+					push(f[o][0],f[o][1],f[o][2],f[o][3]);
 			}
 			else
 				push(f,c,b,d);

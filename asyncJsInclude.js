@@ -1,10 +1,6 @@
-(function() {
-	
-	//document ready callback: see http://dustindiaz.com/smallest-domready-ever , alternative is comment #217 here http://dean.edwards.name/weblog/2006/06/again/#comment367184 
-	function r(f){!include['ready']()?setTimeout('r('+f+')',9):f()}
 	
 	//object given to local context later
-	function asyncIncluder() {
+	window.asyncInclude = new function() {
 		
 		var inc = this;
 		
@@ -86,22 +82,17 @@
 		
 		//our collection function for adding scripts to the loader
 		inc['include'] = function(f,c,b,d) {
-			if(Object.prototype.toString.call(f) == '[object Object]') {
-				for( o in f) {
-					if(f.hasOwnProperty(o)) {
-						if(Object.prototype.toString.call(f[o]) == '[object String]')
-							push(f);
-						else if(Object.prototype.toString.call(f[o]) == '[object Array]')
-							push(f[0],f[1],f[2],f[3]);
-						else if(Object.prototype.toString.call(f[o]) == '[object Object]') {
-							push(f['src'],f['callback'],f['global'],f['type']);
-						}
-					}
-				}
+			if(Object.prototype.toString.call(f) == '[object Array]') {
+				var a = f.length;
+				for(var o=0;o<a;o++)
+					push(f[0],f[1],f[2],f[3]);
 			}
 			else
 				push(f,c,b,d);
 		};
+	
+		//document ready callback: see http://dustindiaz.com/smallest-domready-ever , alternative is comment #217 here http://dean.edwards.name/weblog/2006/06/again/#comment367184 
+		function r(f){!inc['ready']()?setTimeout((function(){ r(f); }),9):f()};
 	
 		//load everything once the page is ready	
 		r(function(){
@@ -114,14 +105,4 @@
 				}
 			});
 	
-	}
-	
-	//setup global reference to the loader
-	var include = new asyncIncluder();
-	
-	if( !this.hasOwnProperty('loader') )
-		this['loader'] = include;
-	else
-		this['asyncInclude'] = include;
-	
-}).call(window);
+	};

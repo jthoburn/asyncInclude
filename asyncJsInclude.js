@@ -115,4 +115,4 @@
 	else
 		this['asyncInclude'] = include;
 	
-}).call(this);
+}).call(window);

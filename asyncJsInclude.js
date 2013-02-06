@@ -67,41 +67,50 @@
 				__SCRIPTS__[0].parentNode.insertBefore(s,__SCRIPTS__[0]);
 				__SCRIPTS__.push(s);
 				__STATUS__[f]['status'] += ' LOADING';
-				s.onload= function(){ __STATUS__[f]['status'] += ' OK'; if( defined(__STATUS__[f].callback)) __STATUS__[f].callback(); };
+				s.onload= function(){ __STATUS__[f]['status'] += ' OK'; if( !! __STATUS__[f].callback ) __STATUS__[f].callback(); };
 			}
 		};
 		
+		function loadCSS(f) {
+			var s = document.createElement('link');
+			s.type='text/css';
+			s.rel='stylesheet';
+			s.href=f;
+			__SCRIPTS__[0].parentNode.insertBefore(s,__SCRIPTS__[0]);
+			__STATUS__[f]['status'] += ' LOADING';
+			s.onload= function(){ __STATUS__[f]['status'] += ' OK'; if( !! __STATUS__[f].callback ) __STATUS__[f].callback(); };
+		};
+		
 		//push unique script's to __status__
-		function push(f,c,b) { if( !defined(b) && !initiated(f) ) __STATUS__[urlprotocol(f)] = { 'status' : 'WAITING', callback : c , global : b }; if(inc['ready']) load(urlprotocol(f)); else __STATUS__[urlprotocol(f)]['status'] += " REJECTED"; };
+		function push(f,c,b,d) { if( !defined(b) && !initiated(f) ) __STATUS__[urlprotocol(f)] = { 'status' : 'WAITING', callback : c , global : b , type : d }; if(inc['ready']) { if( d == 'js' ) load(urlprotocol(f)); else loadCSS(f); }; else __STATUS__[urlprotocol(f)]['status'] += " REJECTED"; };
 		
 		//our collection function for adding scripts to the loader
-		inc['include'] = function(f,c,b) { 
-			if(Object.prototype.toString.call('f') == '[object Array]') {
-				var length = f.length;
-			}
-			else if(Object.prototype.toString.call('f') == '[object Object]') {
+		inc['include'] = function(f,c,b,d) {
+			if(Object.prototype.toString.call('f') == '[object Object]') {
 				for( o in f) {
 					if(f.hasOwnProperty(o)) {
 						if(Object.prototype.toString.call(f[o]) == '[object String]')
 							push(f);
 						else if(Object.prototype.toString.call(f[o]) == '[object Array]')
-							push(f[0],f[1],f[2]);
+							push(f[0],f[1],f[2],f[3]);
 						else if(Object.prototype.toString.call(f[o]) == '[object Object]') {
-							push(f.src,f.callback,f.global);
+							push(f['src'],f['callback'],f['global'],f['type']);
 						}
 					}
 				}
 			}
 			else
-				push(f,c,b);
+				push(f,c,b,d);
 		};
 	
 		//load everything once the page is ready	
 		r(function(){
 			var length = __SCRIPTS__.length;
 			for(i = 0, j=__SCRIPTS__[i]; i < length; i++) {
-				if(__STATUS__[j]['status'].indexOf('LOADING') === -1 )
-					load(j); 
+				if(__STATUS__[j]['status'].indexOf('LOADING') === -1 ) {
+					if(__STATUS__[j].type = 'js')	load(j);
+					else	loadCSS(j);
+					}
 				}
 			});
 	

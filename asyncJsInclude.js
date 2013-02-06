@@ -111,8 +111,8 @@
 	var include = new asyncIncluder();
 	
 	if( !this.hasOwnProperty('loader') )
-		this.loader = include;
+		this['loader'] = include;
 	else
-		this.asyncInclude = include;
+		this['asyncInclude'] = include;
 	
 }).call(this);

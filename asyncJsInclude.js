@@ -86,7 +86,7 @@
 		
 		//our collection function for adding scripts to the loader
 		inc['include'] = function(f,c,b,d) {
-			if(Object.prototype.toString.call('f') == '[object Object]') {
+			if(Object.prototype.toString.call(f) == '[object Object]') {
 				for( o in f) {
 					if(f.hasOwnProperty(o)) {
 						if(Object.prototype.toString.call(f[o]) == '[object String]')

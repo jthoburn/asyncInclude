@@ -108,7 +108,7 @@
 			var length = __SCRIPTS__.length;
 			for(i = 0, j=__SCRIPTS__[i]; i < length; i++) {
 				if(__STATUS__[j]['status'].indexOf('LOADING') === -1 ) {
-					if(__STATUS__[j].type = 'js')	load(j);
+					if(__STATUS__[j].type == 'js')	load(j);
 					else	loadCSS(j);
 					}
 				}

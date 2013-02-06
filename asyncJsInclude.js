@@ -82,7 +82,7 @@
 		};
 		
 		//push unique script's to __status__
-		function push(f,c,b,d) { if( !defined(b) && !initiated(f) ) __STATUS__[urlprotocol(f)] = { 'status' : 'WAITING', callback : c , global : b , type : d }; if(inc['ready']) { if( d == 'js' ) load(urlprotocol(f)); else loadCSS(urlprotocol(f)); } else __STATUS__[urlprotocol(f)]['status'] += " REJECTED"; };
+		function push(f,c,b,d) { if( !defined(b) && !initiated(f) ) __STATUS__[urlprotocol(f)] = { 'status' : 'WAITING', callback : c , global : b , type : d }; if(inc['ready']()) { if( d == 'js' ) load(urlprotocol(f)); else loadCSS(urlprotocol(f)); } else __STATUS__[urlprotocol(f)]['status'] += " REJECTED"; };
 		
 		//our collection function for adding scripts to the loader
 		inc['include'] = function(f,c,b,d) {

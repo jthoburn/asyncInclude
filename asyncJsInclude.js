@@ -4,7 +4,7 @@
 	function r(f){!include.ready()?setTimeout('r('+f+')',9):f()}
 	
 	//object given to local context later
-	function asyncJsIncluder() {
+	function asyncIncluder() {
 		
 		var inc = this;
 		
@@ -12,20 +12,20 @@
 		var __STATUS__ = {},
 			__SCRIPTS__ = document.getElementsByTagName('script');
 			
-		inc.__DIR__ = ( inc.__FILE__ = __SCRIPTS__[__SCRIPTS__.length-1].src ).split('?')[0].split('/').slice(0, -1).join('/') + '/';
+		inc['__DIR__'] = ( inc['__FILE__'] = __SCRIPTS__[__SCRIPTS__.length-1].src ).split('?')[0].split('/').slice(0, -1).join('/') + '/';
 		
 		//add preloaded scripts to status object
 		var index = __SCRIPTS__.length;
 		while(index--) {
 			if( !__STATUS__.hasOwnProperty(__SCRIPTS__[index].src) )
-				__STATUS__[__SCRIPTS__[index].src] = { status: 'PREVIOUSLY LOADED' , callback : false};
+				__STATUS__[__SCRIPTS__[index].src] = { 'status': 'PREVIOUSLY LOADED' , callback : false};
 		}
 		
 		//test dom status, or alternatively set this to true to force scripts to load
 		inc.ready = function(){ return !/in/.test(document.readyState);};
 		
 		//allow status checks
-		inc.status = function(f) { if(!f) return __STATUS__; return __STATUS__[urlprotocol(f)].status; };
+		inc.status = function(f) { if(!f) return __STATUS__; return __STATUS__[urlprotocol(f)]['status']; };
 		
 		//check if a variable is defined
 		function defined(v) {
@@ -58,7 +58,7 @@
 		//load script
 		function load(f) {
 			if(defined(__STATUS__[f].global))
-				__STATUS__[f].status .= "PRE-EXISTING";
+				__STATUS__[f]['status'] .= "PRE-EXISTING";
 			else {
 				var s = document.createElement('script');
 				s.type = 'text/javascript';
@@ -66,13 +66,13 @@
 				s.src = f;
 				__SCRIPTS__[0].parentNode.insertBefore(s,__SCRIPTS__[0]);
 				__SCRIPTS__.push(s);
-				__STATUS__[f].status .= ' LOADING';
-				s.onload= function(){ __STATUS__[f].status .= ' OK'; if( defined(__STATUS__[f].callback)) __STATUS__[f].callback(); };
+				__STATUS__[f]['status'] += ' LOADING';
+				s.onload= function(){ __STATUS__[f]['status'] += ' OK'; if( defined(__STATUS__[f].callback)) __STATUS__[f].callback(); };
 			}
 		};
 		
 		//push unique script's to __status__
-		function push(f,c,b) { if( !defined(b) && !initiated(f) ) __STATUS__[urlprotocol(f)] = { status : 'WAITING', callback : c , global : b }; if(inc.ready) load(urlprotocol(f)); else __STATUS__[urlprotocol(f)].status .= " REJECTED"; };
+		function push(f,c,b) { if( !defined(b) && !initiated(f) ) __STATUS__[urlprotocol(f)] = { 'status' : 'WAITING', callback : c , global : b }; if(inc.ready) load(urlprotocol(f)); else __STATUS__[urlprotocol(f)]['status'] += " REJECTED"; };
 		
 		//our collection function for adding scripts to the loader
 		inc.include = function(f,c,b) { 
@@ -100,7 +100,7 @@
 		r(function(){
 			var length = __SCRIPTS__.length;
 			for(i = 0, j=__SCRIPTS__[i]; i < length; i++) {
-				if(__STATUS__[j].status.indexOf('LOADING') === -1 )
+				if(__STATUS__[j]['status'].indexOf('LOADING') === -1 )
 					load(j); 
 				}
 			});
@@ -108,11 +108,11 @@
 	}
 	
 	//setup global reference to the loader
-	var include = new asyncJsIncluder();
+	var include = new asyncIncluder();
 	
 	if( !this.hasOwnProperty('loader') )
 		this.loader = include;
 	else
-		this.asyncJsInclude = include;
+		this.asyncInclude = include;
 	
 }).call(this);

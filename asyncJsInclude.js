@@ -58,7 +58,7 @@
 		//load script
 		function load(f) {
 			if(defined(__STATUS__[f].global))
-				__STATUS__[f]['status'] .= "PRE-EXISTING";
+				__STATUS__[f]['status'] += "PRE-EXISTING";
 			else {
 				var s = document.createElement('script');
 				s.type = 'text/javascript';

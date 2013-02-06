@@ -1,4 +1,4 @@
-#asyncJsInclude
+#asyncInclude
 
 Copyright(c) 2012 James Thoburn, http://jthoburn.com
 
@@ -6,12 +6,12 @@ Dual licensed under the MIT or GPL Version 2 licenses.
 
 #ABOUT
 
-asyncJsInclude.js is a simple asynchronous javascript script loader that loads script urls dynamically
+asyncInclude.js is a simple asynchronous javascript script loader that loads script urls dynamically
 using a callback for "the smallest DOM ready ever" ( see http://dustindiaz.com/smallest-domready-ever )
 
 ##USAGE
 
-asyncJSInclude adds a single object to its context.  If object is assigned to `context.loader` unless
+asyncInclude adds a single object to its context.  If object is assigned to `context.loader` unless
 `context.loader` were previously defined, in which case the object is assigned to `context.asyncJsInclude`.
 
 the object has the following methods.
@@ -35,10 +35,10 @@ Any script with a defined http protocol is switched to the the protocol the webp
 
 ##STATUS
 
-Every script you load through the `.include()` and all scripts already loaded when asyncJsInclude.js loads are given a status.  You can check the status of a script by calling `.status()` and looping through the included scripts or `.status(src)`.
+Every script you load through the `.include()` and all scripts already loaded when asyncInclude.js loads are given a status.  You can check the status of a script by calling `.status()` and looping through the included scripts or `.status(src)`.
 
 Possible Status strings.
-`PREVIOUSLY LOADED` : this script src was loaded before asyncJsInclude was loaded.
+`PREVIOUSLY LOADED` : this script src was loaded before asyncInclude was loaded.
 `WAITING` : this script src has not started loading yet, likely waiting for .ready() to return true.
 `LOADING` : this script src has begun the process of loading but has not triggered `script.onload`
 `OK` : this script has finished loading and any callback defined for it when `.include()` was called has now been triggered.

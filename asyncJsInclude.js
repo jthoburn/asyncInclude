@@ -22,10 +22,10 @@
 		}
 		
 		//test dom status, or alternatively set this to true to force scripts to load
-		inc.ready = function(){ return !/in/.test(document.readyState);};
+		inc['ready'] = function(){ return !/in/.test(document.readyState);};
 		
 		//allow status checks
-		inc.status = function(f) { if(!f) return __STATUS__; return __STATUS__[urlprotocol(f)]['status']; };
+		inc['status'] = function(f) { if(!f) return __STATUS__; return __STATUS__[urlprotocol(f)]['status']; };
 		
 		//check if a variable is defined
 		function defined(v) {
@@ -72,10 +72,10 @@
 		};
 		
 		//push unique script's to __status__
-		function push(f,c,b) { if( !defined(b) && !initiated(f) ) __STATUS__[urlprotocol(f)] = { 'status' : 'WAITING', callback : c , global : b }; if(inc.ready) load(urlprotocol(f)); else __STATUS__[urlprotocol(f)]['status'] += " REJECTED"; };
+		function push(f,c,b) { if( !defined(b) && !initiated(f) ) __STATUS__[urlprotocol(f)] = { 'status' : 'WAITING', callback : c , global : b }; if(inc['ready']) load(urlprotocol(f)); else __STATUS__[urlprotocol(f)]['status'] += " REJECTED"; };
 		
 		//our collection function for adding scripts to the loader
-		inc.include = function(f,c,b) { 
+		inc['include'] = function(f,c,b) { 
 			if(Object.prototype.toString.call('f') == '[object Array]') {
 				var length = f.length;
 			}

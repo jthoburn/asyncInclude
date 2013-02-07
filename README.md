@@ -4,6 +4,9 @@ Copyright(c) 2012 James Thoburn, http://jthoburn.com
 
 Dual licensed under the MIT or GPL Version 2 licenses.
 
+This script has been intentionally designed to 'advanced' compile using http://closure-compiler.appspot.com/ 
+Both the full and minified versions have been tested in production for Webkit and Mozilla browsers, but they probably work for all browsers. If not, please let me know!
+
 #ABOUT
 
 asyncInclude.js is a simple asynchronous javascript and CSS loader that loads urls dynamically

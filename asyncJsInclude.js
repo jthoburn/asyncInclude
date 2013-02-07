@@ -142,7 +142,7 @@ window['asyncInclude'] = new function() {
 		var index = __SCRIPTS__.length;
 		while(index--) {
 			if( __SCRIPTS__[index]['src'] != '' && !get(__SCRIPTS__[index]['src']) ) {
-				push( __SCRIPTS__[index]['src'], false, '', 'js' );
+				push( __SCRIPTS__[index]['src'], false, '', 'js',false );
 				(get(__SCRIPTS__[index]['src']))['status'] = 'PRE-EXISTING';
 				}
 		}

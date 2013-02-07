@@ -38,11 +38,7 @@ window['asyncInclude'] = new function() {
 		
 		//check if a variable is defined
 		function defined(v) {
-			try { v; }
-			catch(e) {
-				return false;
-			}
-			return !(null == v && null !== v);
+			return window.hasOwnProperty(v);
 		};
 	
 		//check is a script's source is present or has previously been requested with .include()

@@ -11,21 +11,30 @@ using a callback for "the smallest DOM ready ever" ( see http://dustindiaz.com/s
 
 ##USAGE
 
-asyncInclude adds a single object to its context.  If object is assigned to `context.loader` unless
-`context.loader` were previously defined, in which case the object is assigned to `context.asyncJsInclude`.
+asyncInclude adds a single object: `window.asyncInclude` with the following methods.
 
-the object has the following methods.
 
 `.include()` adds scripts to the loader's stack. Scripts are included in the order they are added to the stack.
 
 
-`.include()` can be called with either an `Object` or four arguments.
+`.include()` can be called with either an `Array` of arrays (with 5 arguments each) or five arguments.
 
-`.include(object)` treats each item as a unique script with up to 4 properties.  The
-script can be either a string, an object of the form `{ src: '', callback : fn, global : object, type : str }`, or an array
-in which `[0]` is the `src`, `[1]` is the `callback`, `[2]` is the `global` object, and `[3]` is the `type` (either `'js'` or `'css'`)
+`.include(Array)` treats each item as a unique resource to load with 5 arguments:
 
-`.include(src,callback,global,type)` adds a single script to the stack.
+`[0]` is the `src`
+
+`[1]` is the `callback` you would like executed once the resource (javascript or css) has finished loading.
+
+`[2]` is a string representing a `global` object in the window context.  If `window.hasOwnProperty(global) == true` then the script is not loaded.
+
+`[3]` is the resource `type` (either `'js'` or `'css'`)
+
+`[4]` is an array of strings of global objects upon which this script is dependent.  While the scripts are in theory loaded in the order in which they were passed to `asyncInclude.include()` !!!WARNING!!! property `async=true` is used.
+For example, passing in an array `['jQuery','io']` for `myscript.js` will result in the callback for `myscript.js` not being executed until both `jQuery` and `io` are `window` methods and have had their callbacks executed.
+Dependencies do not have to be scripts that were included using `asyncInclude.include();`!
+
+
+`.include(src,callback,global,type,dependencies)` adds a single script to the stack.
 
 ###GLOBAL
 Many scripts and libraries add a single object to the context they are loaded in. Complicated sites sometimes will load multiple versions or sources of the same library (such as jQuery).  Passing the object for that library to the include script via `global` will result in a quick check to see if it exists, thus preventing multiple loads.  `global` will also be checked again just before a script is actually loaded in case you yourself try to load multiple scripts.  If a match is found at that time, the status for that script will be set to `PRE-EXISTING`. 
@@ -58,4 +67,4 @@ You can pass a callback function to be triggered when the script fires the `onlo
 ##READY
 
 You can directly access the test used to determine the DOM ready state using `.ready()`.
-Alternatively, you can force loading to begin by setting it to true. `.ready = true;`.
+Alternatively, you can force loading to begin by setting it to return true. `.ready = function(){ return true;}`.

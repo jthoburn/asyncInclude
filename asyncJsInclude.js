@@ -109,7 +109,7 @@ window['asyncInclude'] = new function() {
 				s.src = urlprotocol(f['src']);
 				__SCRIPTS__[0].parentNode.insertBefore(s,__SCRIPTS__[0]);
 				f['status'] += ' LOADING';
-				s.onload= function(){ f['status'] += ' OK'; if( !!f.callback ) !f.dependencies?f.callback():loadWhenReady(f); };
+				s.onload= function(){ f['status'] += ' OK'; if( !!f['callback'] ) !f['dependencies']?f['callback']():loadWhenReady(f); };
 			}
 		};
 		
@@ -127,7 +127,7 @@ window['asyncInclude'] = new function() {
 		var push = function(f,c,b,d,e) {
 			var s = get(f);
 			if( !s && (d == 'css' || !defined(b)) ) {
-				__STATUS__.push({ 'src' : f, 'status' : 'WAITING', callback : c , global : b , type : d , dependencies : e });
+				__STATUS__.push({ 'src' : f, 'status' : 'WAITING', 'callback' : c , 'global' : b , 'type' : d , 'dependencies' : e });
 				if( inc['ready']() ) { 
 					if( d == 'js' ) load(get(f));
 					else loadCSS(get(f));

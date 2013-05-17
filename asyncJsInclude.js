@@ -1,4 +1,5 @@
-window['asyncInclude'] = new function() {
+(function(){
+	var a = function() {
 		
 		var inc = this;
 		
@@ -6,43 +7,19 @@ window['asyncInclude'] = new function() {
 		var __STATUS__ = [],
 			__SCRIPTS__ = document.getElementsByTagName('script');
 		
-		/*
-			functions/vars for use as an included file or own file when you need location vars
-			
-			var dirname = function(path) {
-   				return path.replace(/\\/g,'/').replace(/\/[^\/]*$/, '');
-			};
-			
-			//make a link absolute v. relative
-			var justify = function(path) {
-				var count = (path.match(/\.\.\//g)||[]).length, base = inc['__DIR__'];
-				if( count ) {
-					while( count-- )
-						base = dirname(base);
-					return base + '/' + path.replace(/\.\.\//g,'');
-				}
-				return path;
-			}
-			
-			//included file
-			inc['__DIR__'] = dirname( inc['__FILE__'] = __SCRIPTS__[__SCRIPTS__.length-1].src )) + '/';
-			
-			//embeded script
-			inc['__DIR__'] = dirname( inc['__FILE__'] = window.location.href ) + '/';
-		*/
 		
 		//test dom status, or alternatively set this to true to force scripts to load
 		inc['ready'] = function(){ return !/in/.test(document.readyState);};
 		
 		//allow status checks
-		inc['status'] = function(f) { if(!f) return __STATUS__; var a = __STATUS__.length; while(a--){ if( __STATUS__[a]['src'] == f) return __STATUS__[a]['status'];} };
+		inc['status'] = function(f) { if(!f) return __STATUS__; var a = __STATUS__.length; while(a--){ if( __STATUS__[a]['s'] == f) return __STATUS__[a]['m'];} };
 		
 		
 		//check if a script exists in the __STATUS__ array
-		function get(s) {
+		function getS(s) {
 			var a = __STATUS__.length;
 			while(a--){
-				if( __STATUS__[a]['src'] == a)
+				if( __STATUS__[a]['s'] == a)
 					return __STATUS__[a];
 			}
 			return false;
@@ -50,16 +27,16 @@ window['asyncInclude'] = new function() {
 	
 		//return the given url with a fixed protocol to keep pages secure
 		function urlprotocol(f) {
-			if(! f.indexOf('http:') )
+			if( !f.indexOf('http:') )
 				return f;
 			return f.replace('http:','https:');
 		};
 		
 		//whether we're ready to run a callback
 		var isReady = function(f) {
-			var num = f['dependencies'].length, ready = true;	
+			var num = f['d'].length, ready = true;	
 			while( num-- ) {
-				if( !window.hasOwnProperty( f['dependencies'][num] ) )
+				if( !window.hasOwnProperty( f['d'][num] ) )
 					ready = false;
 				}
 			return ready;
@@ -68,45 +45,38 @@ window['asyncInclude'] = new function() {
 		var getByGlobal = function(g) {
 			var a = __STATUS__.length;
 			while(a--){
-				if( __STATUS__[a].global == g)
+				if( __STATUS__[a]['g'] == g)
 					return __STATUS__[a];
 			}
 			return false;
 		};
 		
+		//waits to load until dependencies are loaded		
 		var loadWhenReady = function(f){
-			var num = f['dependencies'].length,ref;
 			
-			while( num-- ) {
-				if( !window.hasOwnProperty( f['dependencies'][num] ) ) {
-					if(ref = getByGlobal(f['dependencies'][num]) ) {
-						if( !!ref['callback'] )
-							ref['callback'] = (function(){ ref['callback'](); if( isReady(f) ) f['callback'](); });
-						else
-							ref['callback'] = (function(){ if( isReady(f) ) f['callback'](); });
-						}
-					else {
-						var TO = function(){isReady(f)?f['callback']():setTimeout( (function(){ TO(); }), 15);};
-						TO();
+			if( !f['d'])
+				load(f);
+			else {
+				
+				//setting it to script onload turned out problematic
+				var TO = function(){ if( isReady(f) ) load(f); else setTimeout( (function(){ TO(); }), 20);};
+				TO();
 					}
-				}
-			}
-					
 		};
 		
 		
 		//load script
 		var load = function(f) {
-			if( window.hasOwnProperty(f['global']) )
-				f['status'] += "PRE-EXISTING";
+			if( window.hasOwnProperty(f['g']) )
+				f['m'] += "PRE-EXISTING";
 			else {
 				var s = document.createElement('script');
 				s.type = 'text/javascript';
 				s.async = true;
-				s.src = urlprotocol(f['src']);
+				s.src = urlprotocol(f['s']);
 				__SCRIPTS__[0].parentNode.insertBefore(s,__SCRIPTS__[0]);
-				f['status'] += ' LOADING';
-				s.onload= function(){ f['status'] += ' OK'; if( !!f['callback'] ) !f['dependencies']?f['callback']():loadWhenReady(f); };
+				f['m'] += ' LOADING';
+				s.onload= (function(){ f['m'] += ' OK'; if( !!f['c'] ) f['c'](); });
 			}
 		};
 		
@@ -114,33 +84,33 @@ window['asyncInclude'] = new function() {
 			var s = document.createElement('link');
 			s.type='text/css';
 			s.rel='stylesheet';
-			s.href=urlprotocol(f['src']);
+			s.href=urlprotocol(f['s']);
 			__SCRIPTS__[0].parentNode.insertBefore(s,__SCRIPTS__[0]);
-			f['status'] += ' LOADING';
-			s.onload= function(){ f['status'] += ' OK'; if( !! f['callback'] ) f['callback'](); };
+			f['m'] += ' LOADING';
+			s.onload= function(){ f['m'] += ' OK'; if( !! f['c'] ) f['c'](); };
 		};
 		
 		//push unique script's to __status__
 		var push = function(f,c,b,d,e) {
-			var s = get(f);
+			var s = getS(f);
 			if( !s && (d == 'css' || !window.hasOwnProperty(b)) ) {
-				__STATUS__.push({ 'src' : f, 'status' : 'WAITING', 'callback' : c , 'global' : b , 'type' : d , 'dependencies' : e });
+				__STATUS__.push({ 's' : f, 'm' : 'WAITING', 'c' : c , 'g' : b , 't' : d , 'd' : e });
 				if( inc['ready']() ) { 
-					if( d == 'js' ) load(get(f));
-					else loadCSS(get(f));
+					if( d == 'js' ) load(getS(f));
+					else loadCSS(getS(f));
 				}
 			}
 			else
-				if(s) s['status'] += " REJECTED";
+				if(s) s['m'] += " REJECTED";
 		};
 		
 		
 		//add preloaded scripts to status object
 		var index = __SCRIPTS__.length;
 		while(index--) {
-			if( __SCRIPTS__[index]['src'] != '' && !get(__SCRIPTS__[index]['src']) ) {
+			if( __SCRIPTS__[index]['src'] != '' && !getS(__SCRIPTS__[index]['src']) ) {
 				push( __SCRIPTS__[index]['src'], false, '', 'js',false );
-				(get(__SCRIPTS__[index]['src']))['status'] = 'PRE-EXISTING';
+				(getS(__SCRIPTS__[index]['src']))['m'] = 'PRE-EXISTING';
 				}
 		}
 		
@@ -165,11 +135,13 @@ window['asyncInclude'] = new function() {
 		r( (function(){
 			var length = __STATUS__.length;
 			for(i = 0; i < length; i++) {
-				if( __STATUS__[i]['status'].indexOf('LOADING') === -1 ) {
-					if(__STATUS__[i].type == 'js')	load(__STATUS__[i]);
+				if( __STATUS__[i]['m'].indexOf('LOADING') === -1 ) {
+					if(__STATUS__[i]['t'] == 'js')	loadWhenReady(__STATUS__[i]);
 					else	loadCSS(__STATUS__[i]);
 					}
 				}
 			}) );
 	
 	};
+	window['asyncInclude'] = new a();
+})();

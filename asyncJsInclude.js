@@ -57,9 +57,9 @@ window['asyncInclude'] = new function() {
 		
 		//whether we're ready to run a callback
 		var isReady = function(f) {
-			var num = f.dependencies.length, ready = true;	
+			var num = f['dependencies'].length, ready = true;	
 			while( num-- ) {
-				if( !window.hasOwnProperty( f.dependencies[num] ) )
+				if( !window.hasOwnProperty( f['dependencies'][num] ) )
 					ready = false;
 				}
 			return ready;
@@ -75,18 +75,18 @@ window['asyncInclude'] = new function() {
 		};
 		
 		var loadWhenReady = function(f){
-			var num = f.dependencies.length,ref;
+			var num = f['dependencies'].length,ref;
 			
 			while( num-- ) {
-				if( !window.hasOwnProperty( f.dependencies[num] ) ) {
-					if(ref = getByGlobal(f.dependencies[num]) ) {
-						if( !!ref.callback )
-							ref.callback = (function(){ ref.callback(); if( isReady(f) ) f.callback(); });
+				if( !window.hasOwnProperty( f['dependencies'][num] ) ) {
+					if(ref = getByGlobal(f['dependencies'][num]) ) {
+						if( !!ref['callback'] )
+							ref['callback'] = (function(){ ref['callback'](); if( isReady(f) ) f['callback'](); });
 						else
-							ref.callback = (function(){ if( isReady(f) ) f.callback(); });
+							ref['callback'] = (function(){ if( isReady(f) ) f['callback'](); });
 						}
 					else {
-						var TO = function(){isReady(f)?f.callback():setTimeout( (function(){ TO(); }), 15);};
+						var TO = function(){isReady(f)?f['callback']():setTimeout( (function(){ TO(); }), 15);};
 						TO();
 					}
 				}
@@ -117,7 +117,7 @@ window['asyncInclude'] = new function() {
 			s.href=urlprotocol(f['src']);
 			__SCRIPTS__[0].parentNode.insertBefore(s,__SCRIPTS__[0]);
 			f['status'] += ' LOADING';
-			s.onload= function(){ f['status'] += ' OK'; if( !! f.callback ) f.callback(); };
+			s.onload= function(){ f['status'] += ' OK'; if( !! f['callback'] ) f['callback'](); };
 		};
 		
 		//push unique script's to __status__

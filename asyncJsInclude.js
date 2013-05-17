@@ -37,10 +37,6 @@ window['asyncInclude'] = new function() {
 		//allow status checks
 		inc['status'] = function(f) { if(!f) return __STATUS__; var a = __STATUS__.length; while(a--){ if( __STATUS__[a]['src'] == f) return __STATUS__[a]['status'];} };
 		
-		//check if a global is defined
-		function defined(v) {
-			return window.hasOwnProperty(v);
-		};
 		
 		//check if a script exists in the __STATUS__ array
 		function get(s) {
@@ -98,9 +94,10 @@ window['asyncInclude'] = new function() {
 					
 		};
 		
+		
 		//load script
 		var load = function(f) {
-			if( defined(f.global) )
+			if( window.hasOwnProperty(f['global']) )
 				f['status'] += "PRE-EXISTING";
 			else {
 				var s = document.createElement('script');
@@ -126,7 +123,7 @@ window['asyncInclude'] = new function() {
 		//push unique script's to __status__
 		var push = function(f,c,b,d,e) {
 			var s = get(f);
-			if( !s && (d == 'css' || !defined(b)) ) {
+			if( !s && (d == 'css' || !window.hasOwnProperty(b)) ) {
 				__STATUS__.push({ 'src' : f, 'status' : 'WAITING', 'callback' : c , 'global' : b , 'type' : d , 'dependencies' : e });
 				if( inc['ready']() ) { 
 					if( d == 'js' ) load(get(f));
